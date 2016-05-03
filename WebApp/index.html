@@ -65,35 +65,23 @@
                 set_width:canvas.width,
                 set_height:canvas.height,
                 set_division:5,
-                set_square_division:14,
+                set_square_division:10,
                 set_square_colors:[
-                    "#dcdadd",
-                    "#2290c1",
-                    "#ddac2c",
-                    "#421f35",
-                    "#e5702d",
-                    "#16205b",
-                    "#26863e",
-                    "#df4634",
-                    "#1288b6",
-                    "#282826",
-                    "#316654"
+                    ["#dcdadd","#2290c1","#ddac2c","#421f35","#e5702d","#16205b","#26863e","#df4634","#1288b6","#282826","#316654"],
+                    ["#316654","#282826","#1288b6","#df4634","#26863e","#16205b","#e5702d","#421f35","#ddac2c","#2290c1","#dcdadd"],
                 ]
             },
             drawSet:function() {
                 var square_width = this.props.set_width/this.props.set_division;
                 var square_height = this.props.set_height/this.props.set_division;
-                var current_set = this.props.set_square_colors;
+                var color_set = this.props.set_square_colors;
+                var current_set = 0;
                 var d = "right";
                 for (var i = 0; i < this.props.set_division; i++) {
                     for (var j = 0; j < this.props.set_division; j++) {
-                        
-                        /*for (var k = 0; k < this.props.set_square_division; k++) {
-                            current_set[k] = this.props.set_square_colors[Math.ceil(Math.random()*this.props.set_square_colors.length)];
-                        }*/
-                        
-                        Stephenator.diagonallyStripedSquare(this.props.set_position_x+(square_width*j), this.props.set_position_y+(square_height*i), square_width, square_height, this.props.set_square_division, d, current_set);
+                        Stephenator.diagonallyStripedSquare(this.props.set_position_x+(square_width*j), this.props.set_position_y+(square_height*i), square_width, square_height, this.props.set_square_division, d, color_set[current_set]);
                         d = (d==="left") ? "right" : "left";
+                        current_set = (current_set+1<color_set.length) ? current_set+1 : 0 ;
                     }
                     if ( this.props.set_division % 2 == 0 ) {
                         d = (d==="left") ? "right" : "left";
