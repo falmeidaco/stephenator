@@ -30,6 +30,7 @@
         }
 
         var Stephenator = {
+            default_colors:["#dcdadd", "#2290c1", "#ddac2c", "#421f35", "#e5702d", "#16205b", "#26863e", "#df4634", "#1288b6", "#282826", "#316654"],
             props: {
                 set_position_x: 0,
                 set_position_y: 0,
@@ -37,10 +38,7 @@
                 set_height: canvas.height,
                 set_matrix: 5,
                 set_square_division: 10,
-                set_square_colors: [
-                    ["#dcdadd", "#2290c1", "#ddac2c", "#421f35", "#e5702d", "#16205b", "#26863e", "#df4634", "#1288b6", "#282826", "#316654"],
-                    ["#316654", "#282826", "#1288b6", "#df4634", "#26863e", "#16205b", "#e5702d", "#421f35", "#ddac2c", "#2290c1", "#dcdadd"],
-                ]
+                set_square_colors: [["#dcdadd", "#2290c1", "#ddac2c", "#421f35", "#e5702d", "#16205b", "#26863e", "#df4634", "#1288b6", "#282826", "#316654"]]
             },
             drawSet: function () {
                 var square_width = this.props.set_width / this.props.set_matrix;
@@ -172,6 +170,65 @@
             Stephenator.props.set_square_division = $(this).val();
             CanvasDraw.draw();
         });
+        //Creating colors set
+        function updateSet() {
+            
+            var htmlItem = "";
+            var htmlDefOptions = "";
+            var htmlCurOptions = "";
+            var i;
+            
+            for (i = 0; i<Stephenator.default_colors.length; i++) {
+                htmlDefOptions += '<option style="background:'+Stephenator.default_colors[i]+'" value="'+Stephenator.default_colors[i]+'">'+Stephenator.default_colors[i]+'</option>';
+            }
+            
+            for (i = 0; i<Stephenator.props.set_square_colors.length; i++) {
+                for (j = 0; j<Stephenator.props.set_square_colors[i].length; j++) {
+                    htmlCurOptions += '<option style="background:'+Stephenator.props.set_square_colors[i][j]+'" value="'+j+'">'+Stephenator.props.set_square_colors[i][j]+'</option>';
+                }
+                htmlItem += '<li id="item-'+i+'">'+
+                            '<select name="default-colors" class="def-colors">'+htmlDefOptions+'</select>'+
+                            '<button class="add-color">Adicionar</button>'+
+                            '<select name="default-colors" class="set-colors">'+htmlCurOptions+'</option>'+'</select>'+
+                            '<button class="rem-color">Remover</button>'+
+                            '</li>';
+                htmlCurOptions = "";
+            }
+            
+            $("#set-colors").html(htmlItem);
+        }
+        
+        $("#add-set").click(function() {
+            Stephenator.props.set_square_colors.push([Stephenator.default_colors[0]]);
+            updateSet();
+            CanvasDraw.draw();
+        });
+        
+        $('#set-colors').delegate('button', 'click', function() {
+            
+            var set_id = parseInt($(this).parent().attr("id").replace("item-",""));
+            var selected_item;
+            
+            switch ( $(this).attr("class") ) {
+                case "add-color":
+                    Stephenator.props.set_square_colors[set_id].push($('#item-'+set_id+' .def-colors').val());
+                    break;
+                case "rem-color":
+                    console.log(Stephenator.props.set_square_colors[set_id].length);
+                    if (Stephenator.props.set_square_colors[set_id].length>0) {   
+                        selected_item = $("#item-"+set_id+" .set-colors").val();
+                        Stephenator.props.set_square_colors[set_id].splice(selected_item, 1);
+                    } else {
+                        Stephenator.props.set_square_colors.splice(set_id, 1);
+                    }
+                    break;
+            }
+            
+            updateSet();
+            CanvasDraw.draw();
+            
+        });
+        updateSet();
         
     });
 })(jQuery);
