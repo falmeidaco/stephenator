@@ -82,11 +82,29 @@
                     //Desenho da listra central
                     polygon.fillStyle = c[fill_index];
                     if (d === "left") {
-                        polygon.draw(context, x, y + half_distance_h, x + w - half_distance_w, y + h, x + w, y + h, x, y);
-                        polygon.draw(context, x, y, x + w, y + h, x + w, y + h - half_distance_h, x + half_distance_w, y);
+                        polygon.draw(context, [
+                            [x, y + half_distance_h],
+                            [x + w - half_distance_w, y + h],
+                            [x + w, y + h],
+                            [x + w, y + h - half_distance_h],
+                            [x + half_distance_w, y],
+                            [x,y]
+                        ]);
+                        /* Fix for processing */
+                        //polygon.draw(context, x, y + half_distance_h, x + w - half_distance_w, y + h, x + w, y + h, x, y);
+                        //polygon.draw(context, x, y, x + w, y + h, x + w, y + h - half_distance_h, x + half_distance_w, y);
                     } else {
-                        polygon.draw(context, x, y + (h - half_distance_h), x + (w - half_distance_w), y, x + w, y, x, y + h);
-                        polygon.draw(context, x, y + h, x + w, y, x + w, y + half_distance_h, x + half_distance_w, y + h);
+                         polygon.draw(context, [
+                            [x, y + (h - half_distance_h)],
+                            [x + (w - half_distance_w), y],
+                            [x + w, y],
+                            [x + w, y + half_distance_h],
+                            [x + half_distance_w, y + h],
+                            [x, y + h]
+                        ]);
+                        /* Fix for processing */
+                        //polygon.draw(context, x, y + (h - half_distance_h), x + (w - half_distance_w), y, x + w, y, x, y + h);
+                        //polygon.draw(context, x, y + h, x + w, y, x + w, y + half_distance_h, x + half_distance_w, y + h);
                     }
                     fill_index = (fill_index + 1 < c.length) ? fill_index + 1 : 0;
 
