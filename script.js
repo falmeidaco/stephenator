@@ -147,6 +147,8 @@
             }
         }
         
+        $('.content').perfectScrollbar();
+        
         //Covering background with canvas area
         $(window).resize(function (event) {
             $("#canvas-container").css({width:$(window).width(),height:$(window).height()});
@@ -157,11 +159,14 @@
                 $("#canvas").attr("width", $(window).height());
                 $("#canvas").attr("height", $(window).height());
             }
+            $('.content').perfectScrollbar('update');
             //Redraw canvas
             CanvasDraw.draw();
         }).resize();
         
         //Updating properties
+        $("#set_matrix").val(Stephenator.props.set_matrix);
+        $("#set_square_division").val(Stephenator.props.set_square_division);
         $("#set_matrix").change(function() {
             Stephenator.props.set_matrix = $(this).val();
             CanvasDraw.draw();
@@ -170,6 +175,7 @@
             Stephenator.props.set_square_division = $(this).val();
             CanvasDraw.draw();
         });
+        
         //Creating colors set
         function updateSet() {
             
@@ -188,16 +194,16 @@
                 }
                 htmlItem += '<li id="item-'+i+'">'+
                             '<select name="default-colors" class="def-colors">'+htmlDefOptions+'</select>'+
-                            '<button class="add-color">Adicionar</button>'+
+                            '<button class="add-color">+</button>'+
                             '<select name="default-colors" class="set-colors">'+htmlCurOptions+'</option>'+'</select>'+
-                            '<button class="rem-color">Remover</button>'+
+                            '<button class="rem-color">-</button>'+
                             '</li>';
                 htmlCurOptions = "";
             }
             
             $("#set-colors").html(htmlItem);
         }
-        
+
         $("#add-set").click(function() {
             Stephenator.props.set_square_colors.push([Stephenator.default_colors[0]]);
             updateSet();
@@ -228,6 +234,7 @@
             CanvasDraw.draw();
             
         });
+        
         updateSet();
         
     });
