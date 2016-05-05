@@ -149,6 +149,18 @@ class StephenWestfall {
     }
   }
   
+  void drawFrames(float l, float s, float d, color c) {
+    int i;
+    fill(c);
+    for (i = 0; i<l; i++) {
+      fill(140);
+      rect(width/2-s-d*i, height/2-s-(d*i), s*2+((d*i)*2), s);
+      rect(width/2-s-d*i, height/2+(d*i), s*2+((d*i)*2), s);
+      rect(width/2-s-d*i, height/2-s-(d*i), s, s*2+((d*i)*2));
+      rect(width/2+d*i, height/2-s-(d*i), s, s*2+((d*i)*2));
+    }
+  }
+  
 }
 
 public enum Direction {

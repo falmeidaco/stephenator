@@ -38,7 +38,11 @@
                 set_height: canvas.height,
                 set_matrix: 5,
                 set_square_division: 10,
-                set_square_colors: [["#dcdadd", "#2290c1", "#ddac2c", "#421f35", "#e5702d", "#16205b", "#26863e", "#df4634", "#1288b6", "#282826", "#316654"]]
+                set_square_colors: [["#dcdadd", "#2290c1", "#ddac2c", "#421f35", "#e5702d", "#16205b", "#26863e", "#df4634", "#1288b6", "#282826", "#316654"]],
+                frame_length:0,
+                frame_size:10,
+                frame_distance:10,
+                frame_color:"#dcdadd"
             },
             drawSet: function () {
                 var square_width = this.props.set_width / this.props.set_matrix;
@@ -55,6 +59,20 @@
                     if (this.props.set_matrix % 2 == 0) {
                         d = (d === "left") ? "right" : "left";
                     }
+                }
+            },
+            drawFrames:function(l,s,d,c) {
+                var l = this.props.frame_length;
+                var s = this.props.frame_size;
+                var d = this.props.frame_distance;
+                var c = this.props.frame_color;
+                var i;
+                context.fillStyle = c;
+                for (i = 0; i<l; i++) {
+                    context.fillRect(this.props.set_width/2-s-d*i, this.props.set_height/2-s-(d*i), s*2+((d*i)*2), s);
+                    context.fillRect(this.props.set_width/2-s-d*i, this.props.set_height/2+(d*i), s*2+((d*i)*2), s);
+                    context.fillRect(this.props.set_width/2-s-d*i, this.props.set_height/2-s-(d*i), s, s*2+((d*i)*2));
+                    context.fillRect(this.props.set_width/2+d*i, this.props.set_height/2-s-(d*i), s, s*2+((d*i)*2));
                 }
             },
             diagonallyStripedSquare: function (x, y, w, h, n, d, c) {
@@ -160,6 +178,7 @@
                 Stephenator.props.set_height = canvas.height;
                 //Draw it!
                 Stephenator.drawSet(this.canvas);
+                Stephenator.drawFrames();
                 //If animated, replay
                 if (CanvasDraw.animated) window.requestAnimationFrame(this.draw);
             }
@@ -191,6 +210,24 @@
         });
         $("#set_square_division").change(function() {
             Stephenator.props.set_square_division = $(this).val();
+            CanvasDraw.draw();
+        });
+        $("#frame_length").val(Stephenator.props.frame_length).change(function() {
+            Stephenator.props.frame_length = $(this).val();
+            console.log(Stephenator.props.frame_length);
+            CanvasDraw.draw();
+        });
+        $("#frame_size").val(Stephenator.props.frame_size).change(function() {
+            
+            Stephenator.props.frame_size = $(this).val();
+            CanvasDraw.draw();
+        });
+        $("#frame_distance").val(Stephenator.props.frame_distance).change(function() {
+            Stephenator.props.frame_distance = $(this).val();
+            CanvasDraw.draw();
+        });
+        $("#frame_color").change(function() {
+            Stephenator.props.frame_color = $(this).val();
             CanvasDraw.draw();
         });
         

@@ -2,16 +2,15 @@
 <html lang="pt-br">
 
 <head>
-    
     <meta charset="UTF-8">
-    <meta name="tag" content="">
-    <meta name="description" content="">
-    
+    <meta name="tag" content="processing, stephen westfall, ufc, javascript, canvas, html5 ">
+    <meta name="description" content="Site do trabalho desenvolvido para a disciplina de Matemática Aplicada à Multimídia, pela Universidade Federal do Ceará (UFC)">
     <title>Stephenator</title>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/perfect-scrollbar/css/perfect-scrollbar.min.css">
     <style>
-        html,body {
+        html,
+        body {
             width: 100%;
             height: 100%;
             position: relative;
@@ -19,60 +18,143 @@
             padding: 0;
             overflow: hidden;
         }
+        
+        #canvas-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #canvas {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid #000;
+            display: block;
+            z-index: 0;
+        }
+        
         .content {
             z-index: 1;
             position: absolute;
             display: block;
-            right:10px;
+            right: 10px;
             top: 0;
             width: 400px;
             height: 100%;
             overflow: hidden;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             font-size: 12px;
         }
-        header { margin: 1em 0; }
-        article { color: #fff; }
+        
+        header {
+            margin: 1em 0;
+        }
+        
+        article {
+            color: #fff;
+        }
         
         .panel-default {
             color: white;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             border: 1px solid black;
             border-radius: 0;
             margin-bottom: 1em;
         }
-            .panel-default .panel-heading {
-                background-color: black;
-                color: white;
-                border: 0;
-                padding: 0.5em;
-                color: #aaaaaa;
-            }
-            .panel-default .panel-body {
-                padding: 1em;
-            }
-                .form-group {
-                    margin-bottom: 1em;
-                }
+        
+        .panel-default .panel-heading {
+            background-color: black;
+            color: white;
+            border: 0;
+            padding: 0.5em;
+            color: #aaaaaa;
+        }
+        
+        .panel-default .panel-body {
+            padding: 1em;
+        }
+        
+        .panel-default .panel-footer {
+            background-color: black;
+            border: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1em;
+        }
         
         .form-control[type="number"] {
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             border-color: black;
             border-radius: 0;
         }
-        #set-colors, #set-colors li {
+        select.form-control {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-color: black;
+            border-radius: 0;
+        }
+        
+        .palette-group,
+        .palette-group li {
             list-style: none;
             margin: 0;
             padding: 0;
         }
+        
+        .palette-group li {
+            border-bottom: 1px solid #111;
+            margin-bottom: 0.3em;
+        }
+        
+        .color-item {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+        
+        .color-item .color-change {
+            display: block;
+            width: 20px;
+            height: 20px;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .color-item .color-remove {
+            display: block;
+            background-color: red;
+            width: 5px;
+            height: 5px;
+            text-decoration: none;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: 1;
+        }
+        
+        #set-colors,
+        #set-colors li {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
         #set-colors select {
-            background-color: rgba(0,0,0,0.5);
-            border:1px solid black;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid black;
             padding: 0.5em;
             text-transform: uppercase;
             margin-right: 0.5em;
         }
-        .add-color, .rem-color {
+        
+        .add-color,
+        .rem-color {
             background-color: #111;
             color: white;
             border: 0;
@@ -82,6 +164,7 @@
             margin-right: 1em;
             font-weight: bold;
         }
+        
         #add-set {
             background-color: #111;
             color: white;
@@ -93,71 +176,149 @@
             border-radius: 0;
             font-size: 1em;
         }
-        
-        #canvas-container {
-            position: relative;
-            overflow: hidden;
-        }
-            #canvas {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                border: 3px solid #000;
-                display: block;
-                z-index: 0;
-            }
     </style>
 </head>
 
 <body>
-<!-- Google Tag Manager -->
-<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PM89VR"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PM89VR');</script>
-<!-- End Google Tag Manager -->
+    <!-- Google Tag Manager -->
+    <noscript>
+        <iframe src="//www.googletagmanager.com/ns.html?id=GTM-PM89VR" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <script>
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                '//www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PM89VR');
+    </script>
+    <!-- End Google Tag Manager -->
     <section class="content">
-        <div class="container-fluid">        
+        <div class="container-fluid">
             <header>
                 <img class="img-responsive" img-re src="assets/logo.png" alt="stephenator - criador de arte">
-            </header>   
+            </header>
             <div class="panel panel-default">
-                <div class="panel-heading">propriedades</div>
+                <div class="panel-heading">configurações da arte</div>
                 <div class="panel-body">
-                    <div class="form-group">
-                       <label for="set_matrix">Variações</label>
-                       <input id="set_matrix" class="form-control" type="number" min="1" value="1">
-                    </div>
-                    <div class="form-group">
-                       <label for="set_square_division">Divisoes</label>
-                       <input id="set_square_division" class="form-control" type="number" min="1" value="1">
-                    </div>
                     <div class="panel panel-default">
-                       <div class="panel-heading">
-                           paleta de cores
-                       </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="set_matrix">variações</label>
+                                <input id="set_matrix" class="form-control" type="number" min="1" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="set_square_division">divisoes</label>
+                                <input id="set_square_division" class="form-control" type="number" min="1" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="frame_length">molduras sobrepostas</label>
+                                <input id="frame_length" class="form-control" type="number" min="0" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="frame_size">largura</label>
+                                <input id="frame_size" class="form-control" type="number" min="1" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="frame_distance">distância</label>
+                                <input id="frame_distance" class="form-control" type="number" min="1" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="frame_color">cor da moldura</label>
+                                <select class="form-control" id="frame_color">
+                                    <option value="#dcdadd" style="background:#dcdadd">#dcdadd</option>
+                                    <option value="#2290c1" style="background:#2290c1">#2290c1</option>
+                                    <option value="#ddac2c" style="background:#ddac2c">#ddac2c</option>
+                                    <option value="#421f35" style="background:#421f35">#421f35</option>
+                                    <option value="#e5702d" style="background:#e5702d">#e5702d</option>
+                                    <option value="#16205b" style="background:#16205b">#16205b</option>
+                                    <option value="#26863e" style="background:#26863e">#26863e</option>
+                                    <option value="#df4634" style="background:#df4634">#df4634</option>
+                                    <option value="#1288b6" style="background:#1288b6">#1288b6</option>
+                                    <option value="#282826" style="background:#282826">#282826</option>
+                                    <option value="#316654" style="background:#316654">#316654</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            paleta de cores
+                        </div>
+                        <div class="panel-body">
+                            <ul class="palette-group">
+                                <li class="color-group">
+                                    <div style="background-color:#2290c1" class="color-item">
+                                        <a class="color-change" href="#"></a>
+                                        <a class="color-remove" href="#"></a>
+                                    </div>
+                                    <div style="background-color:#ddac2c" class="color-item">
+                                        <a class="color-change" href="#"></a>
+                                        <a class="color-remove" href="#"></a>
+                                    </div>
+                                    <div style="background-color:#421f35" class="color-item">
+                                        <a class="color-change" href="#"></a>
+                                        <a class="color-remove" href="#"></a>
+                                    </div>
+                                </li>
+                                <li class="color-group">
+                                    <div style="background-color:#2290c1" class="color-item">
+                                        <a class="color-change" href="#"></a>
+                                        <a class="color-remove" href="#"></a>
+                                    </div>
+                                    <div style="background-color:#ddac2c" class="color-item">
+                                        <a class="color-change" href="#"></a>
+                                        <a class="color-remove" href="#"></a>
+                                    </div>
+                                    <div style="background-color:#421f35" class="color-item">
+                                        <a class="color-change" href="#"></a>
+                                        <a class="color-remove" href="#"></a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-default btn-block">Adicionar paleta de cores</button>
+                        </div>
+                    </div>
+                    -->
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            paleta de cores
+                        </div>
                         <div class="panel-body">
                             <ul class="form-group" id="set-colors">
                             </ul>
                         </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-default btn-block" id="add-set">Adicionar paleta de cores</button>
+                        </div>
                     </div>
-                    <button class="btn btn-default btn-block" id="add-set">Adicionar paleta de cores</button>
+
                 </div>
             </div>
             <article class="content-text">
-                <h2>Sobre</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem culpa esse nemo repellendus nulla officiis ullam eligendi animi ad placeat aliquid deserunt quia, commodi alias fugit nesciunt quos repellat facere.</p>                
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem culpa esse nemo repellendus nulla officiis ullam eligendi animi ad placeat aliquid deserunt quia, commodi alias fugit nesciunt quos repellat facere.</p>                
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem culpa esse nemo repellendus nulla officiis ullam eligendi animi ad placeat aliquid deserunt quia, commodi alias fugit nesciunt quos repellat facere.</p>                
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem culpa esse nemo repellendus nulla officiis ullam eligendi animi ad placeat aliquid deserunt quia, commodi alias fugit nesciunt quos repellat facere.</p>                
-            </article> 
+                <h2>Sobre este site</h2>
+                <h3>Objetivo</h3>
+                <p>O site foi desenvolvido para a visualização do resultado do desenvolvimento do trabalho para a disciplina de <strong>Matemática Aplicada à Multimídia I</strong> (Universidade Federal do Ceará, semestre II). Selecionando uma série de obras de algum artista, deve ser desenvolvido um recurso que possibilite a reprodução visual da série escolhida. Deve ser analisado os detalhes das obras, seus padrões de formas, cores, ângulos e quaisquer outras características que possam ser usadas como variáveis a serem utilizadas para a reprodução da imagem.</p>
+                <h3>Desenvolvimento</h3>
+                <p>Inicialmente foi analisado as características e padrões da obra. É possível perceber que ela é composta por uma repetição de quadrados. Estes quadrados possuem um número de divisões padrão para todos eles, e para cada divisão é aplicada uma cor, resultando em um quadrado colorido diagonalmente listrado. Cada quadrado é composto por trapézios. Quando o número de divisões de cada quadrado é ímpar, é gerada uma exceção para o elemento central, que acaba virando um hexágono.</p>
+                <p>Foi desenvolvido um algoritmo em Processing para o estudo do comportamento desses elementos. O primeiro passo foi a simplificação da obra, desenhando um único quadrado utilizando a função <em>quad</em> do Processing para o desenho dos trapézios. É importante notar que para a regra de divisões ímpares citada no parágrafo cima, foi utilizado o seguinte método: o desenho hexágono central é composto por dois trapézios. A razão disso é que no Processing não existe uma função básica para o desenho de formas com mais de 4 vértices.</p>
+                <h3>Recursos</h3>
+                <p>Concluído o algoritmo, este foi reproduzido e adaptado para página da web utilizando o recurso canvas do HTML5. Para o site, também foi utilizado a biblioteca css <a href="http://getbootstrap.com/">Bootstrap</a> com os elementos customizados, biblioteca javascript <a href="https://jquery.com/">JQuery</a> para o desenvolvimento dos controles de variáveis, e a biblioteca javascript <a href="https://noraesae.github.io/perfect-scrollbar/">Perfect-Scrollbar</a> para a customização da barra de rolagem da área de conteúdo.</p>
+                <h2>Sobre o artista</h2>
+                <p>Stephen Westfall é um artita e crítico que se descreve como “Popista, pós-minimalista de pinturas geométricas.</p>
+            </article>
         </div>
     </section>
     <div class="canvas-container">
