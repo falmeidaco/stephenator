@@ -1,63 +1,70 @@
 StephenWestfall artist = new StephenWestfall();
 
-float set_position_x;
-float set_position_y;
-float set_width;
-float set_height;
-int set_division;
-int set_square_division;
-color[] set_square_colors;
+float   painting_x;
+float   painting_y;
+float   painting_width;
+float   painting_height;
 
-float frame_length;
-float frame_size;
-float frame_distance;
+int     painting_rows;
+int     painting_colums;
+Direction start_direction;
+
+int     square_division;
+color[] square_colors;
+
+float   frames;
+float   frame_size;
+float   frame_distance;
 color[] frame_colors;
 
 void setup() {
 
   size(500, 500);
 
-  colorMode(HSB, 360, 100, 100);
+  painting_x = 10;
+  painting_y = 10;
+  painting_width = 480;
+  painting_height = 480;
+  
+  painting_rows = 4;
+  painting_colums = 4;
+  start_direction = Direction.LEFT;
+  
+  square_division = 5;
+  square_colors = artist.colors;
 
-  set_position_x = 0;
-  set_position_y = 0;
-  set_width = width;
-  set_height = height;
-  set_division = 3;
-  set_square_division = 8;
-  set_square_colors = artist.colors;
-
-  frame_length = 3;
+  frames = 0;
   frame_size = width/12;
   frame_distance = frame_size*2;
   frame_colors = artist.colors;
+  
 }
 
 void draw() {
 
-  background(artist.colors[4]);
-
+  background(255);
   noStroke();
-
-  drawSet(set_position_x, set_position_y, set_width, set_height, set_division, set_square_division, set_square_colors);
-  artist.drawFrames(frame_length, frame_size, frame_distance, artist.colors[2]);
-
+  drawSet(painting_x, painting_y, painting_width, painting_height, painting_rows, painting_colums, square_division, start_direction, square_colors);
+  //artist.drawFrames(frame_length, frame_size, frame_distance, artist.colors[2]);
   stop();
 }
 
-void drawSet(float x, float y, float w, float h, int n, int n_square, color...c) {
+void drawSet(float x, float y, float w, float h, int row, int col, int square_division, Direction start_direction, color...c) {
 
-  float square_width = w/n;
-  float square_height = h/n;
-
-  Direction d = Direction.RIGHT;
-
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      artist.diagonallyStripedSquare(x+(square_width*j), y+(square_height*i), square_width, square_height, n_square, d, c);
-      d = (d==Direction.LEFT) ? Direction.RIGHT : Direction.LEFT;
+  float square_width = w/col;
+  float square_height = h/row;
+  
+  Direction current_direction = start_direction;
+  
+  for (int i = 0; i < row; i++) {
+    for (int j = 0; j < col; j++) {
+      artist.diagonallyStripedSquare(x+(square_width*j), y+(square_height*i), square_width, square_height, square_division, current_direction, c);
+      if (start_direction == Direction.LEFT) current_direction = (current_direction==start_direction) ? Direction.RIGHT : Direction.LEFT;
+      else current_direction = (current_direction==start_direction) ? Direction.LEFT : Direction.RIGHT;
     }
-    if ( n % 2 == 0 )
-      d = (d==Direction.LEFT) ? Direction.RIGHT : Direction.LEFT;
+    if ( row % 2 == 0 ) { 
+      if (start_direction == Direction.LEFT) current_direction = (current_direction==start_direction) ? Direction.RIGHT : Direction.LEFT;
+      else current_direction = (current_direction==start_direction) ? Direction.LEFT : Direction.RIGHT;
+    }
   }
 }
