@@ -1,19 +1,50 @@
-class StephenWestfall {
-
+class StephenWestfall 
+{
+  Boolean orginal_square_division = true;
   color[] colors = {
-    color(0, 0, 0), //preto
-    color(0,75,80), //vermelho
-    color(11,43,86), //rosa
-    color(25,98,84), //laranja
-    color(48,99,91), //amarelo
-    color(159,55,50), //verde
-    color(255,69,49), //azul marinho
-    color(341, 69, 36), //roxo
-    color(0, 0, 100), //branco
+    color(221, 221, 221), //branco
+    color(34, 144, 193), //azul
+    color(221, 172, 44), //amarelo
+    color(66, 31, 53), //roxo
+    color(229, 112, 45), //laranja
+    color(22, 32, 91), //azul escuro
+    color(38, 134, 62), //verde
+    color(223, 70, 52), //vermelho
+    color(40, 40, 38), //preto
+    color(49, 102, 84) //verde musgo
   };
-  
+  //Método para criação da arte
+  void drawPainting(float x, float y, float w, float h, int row, int col, int square_division, Direction start_direction, color...c) {
+    color[][] colors = {c};
+    drawPainting(x,y,w,h,row,col,square_division,start_direction,colors);
+  }
+  void drawPainting(float x, float y, float w, float h, int row, int col, int square_division, Direction start_direction, color[]...c) { 
+    float square_width = w/col;
+    float square_height = h/row;
+    int i, j, fill_colors = 0; 
+    Direction current_direction = start_direction;
+    for (i = 0; i < row; i++) {
+      for (j = 0; j < col; j++) {
+        drawColorFullSquare(x+(square_width*j), y+(square_height*i), square_width, square_height, square_division, current_direction, c[fill_colors]);
+        if (start_direction == Direction.LEFT) current_direction = (current_direction==start_direction) ? Direction.RIGHT : Direction.LEFT;
+        else current_direction = (current_direction==start_direction) ? Direction.LEFT : Direction.RIGHT;
+        fill_colors = (fill_colors+1<c.length) ? fill_colors+1 : 0 ;
+      }
+      if ( row % 2 == 0 ) { 
+        if (start_direction == Direction.LEFT) current_direction = (current_direction==start_direction) ? Direction.RIGHT : Direction.LEFT;
+        else current_direction = (current_direction==start_direction) ? Direction.LEFT : Direction.RIGHT;
+      }
+    }
+  }
+  void drawColorFullSquare(float x, float y, float w, float h, int n, Direction d, color...c) {
+    if (orginal_square_division) {
+      drawFixedColorFullSquare(x,y,w,h,n,d,c);
+    } else {
+      drawFixedColorFullSquare(x,y,w,h,n,d,c);
+    }
+  }
   //Vesão 'corrigida' do quadrado listrado
-  void diagonallyStripedSquare(float x, float y, float w, float h, int n, Direction d, color...c) {
+  void drawFixedColorFullSquare(float x, float y, float w, float h, int n, Direction d, color...c) {
     //Iniciando variáveis
     int i, half_n, fill_index = 0;
     //Largura horizontal da barra
@@ -45,8 +76,6 @@ class StephenWestfall {
         vertex(x+w-half_bar_width, y+h);
         vertex(x, y+half_bar_height);
         endShape(CLOSE);
-        //quad(x, y+half_distance_h, x+w-half_distance_w, y+h, x+w, y+h, x, y);
-        //quad(x, y, x+w, y+h, x+w, y+h-half_distance_h, x+half_distance_w, y);
       } else {
         beginShape();
         vertex(x, y+h);
@@ -56,8 +85,6 @@ class StephenWestfall {
         vertex(x+w, y+half_bar_height);
         vertex(x+half_bar_width, y+h);
         endShape(CLOSE);
-        //quad(x, y+(h-half_distance_h), x+(w-half_distance_w), y, x+w, y, x, y+h);
-        //quad(x, y+h, x+w, y, x+w, y+half_distance_h, x+half_distance_w, y+h);
       }
       fill_index = (fill_index+1<c.length) ? fill_index+1 : 0 ;
       //Lado 2
@@ -85,9 +112,8 @@ class StephenWestfall {
       }
     }
   }
-  
   //Vesão original do quadrado listrado
-  void originalDiagonallyStripedSquare(float x, float y, float w, float h, int n, Direction d, color...c) {
+  void drawOriginalColorfulSquare(float x, float y, float w, float h, int n, Direction d, color...c) {
     //Iniciando variáveis
     int i, half_n, fill_index = 0;
     float bar_width, bar_height;
@@ -141,23 +167,22 @@ class StephenWestfall {
         fill_index = (fill_index+1<c.length) ? fill_index+1 : 0 ;
       }
     }
-  }
-  
+  }  
   //Desenho dos quadros sobre o quadrado listrado
-  void drawFrames(float l, float s, float d, color c) {
-    int i;
-    fill(c);
+  void drawOverFrames(float l, float s, float d, color...c) {
+    int i, fill_index = 0;
+    fill(c[fill_index]);
     for (i = 0; i<l; i++) {
       fill(140);
       rect(width/2-s-d*i, height/2-s-(d*i), s*2+((d*i)*2), s);
       rect(width/2-s-d*i, height/2+(d*i), s*2+((d*i)*2), s);
       rect(width/2-s-d*i, height/2-s-(d*i), s, s*2+((d*i)*2));
       rect(width/2+d*i, height/2-s-(d*i), s, s*2+((d*i)*2));
+      fill_index = (fill_index+1<c.length) ? fill_index+1 : 0 ;
     }
   }
-  
   //Desenho do triângulo colorido
-  void trianguloColorido(float x, float y, float w, float h, int n, Direction d, color...c) {
+  void drawColorfulTriangle(float x, float y, float w, float h, int n, Direction d, color...c) {
     if (n>0) {
       int fill_index = 0;
       float intervalo_w = w/n;
@@ -166,37 +191,36 @@ class StephenWestfall {
         fill(c[fill_index]);
         switch(d) {
           case LEFT_DOWN:
-            triangulo(x, y+(intervalo_h*i), w-(intervalo_w*i), h-(intervalo_h*i), d);
+            drawTriangle(x, y+(intervalo_h*i), w-(intervalo_w*i), h-(intervalo_h*i), d);
             break;
           case RIGHT_UP:
-            triangulo(x+(intervalo_w*i), y, w-(intervalo_w*i), h-(intervalo_h*i), d);
+            drawTriangle(x+(intervalo_w*i), y, w-(intervalo_w*i), h-(intervalo_h*i), d);
             break;
           case LEFT_UP:
-            triangulo(x, y, w-(intervalo_w*i), h-(intervalo_h*i), d);
+            drawTriangle(x, y, w-(intervalo_w*i), h-(intervalo_h*i), d);
             break;
           case RIGHT_DOWN:
-            triangulo(x+(intervalo_w*i), y+(intervalo_w*i), w-(intervalo_w*i), h-(intervalo_h*i), d);
+            drawTriangle(x+(intervalo_w*i), y+(intervalo_w*i), w-(intervalo_w*i), h-(intervalo_h*i), d);
             break;
           case UP:
-            triangulo(x+(intervalo_w*i)/2, y, w-(intervalo_w*i), h-(intervalo_h*i), d);
+            drawTriangle(x+(intervalo_w*i)/2, y, w-(intervalo_w*i), h-(intervalo_h*i), d);
             break;
          case DOWN:
-            triangulo(x+(intervalo_w*i)/2, y+(intervalo_w*i), w-(intervalo_w*i), h-(intervalo_h*i), d);
+            drawTriangle(x+(intervalo_w*i)/2, y+(intervalo_w*i), w-(intervalo_w*i), h-(intervalo_h*i), d);
             break;
          case LEFT:
-            triangulo(x, y+(intervalo_w*i)/2, w-(intervalo_w*i), h-(intervalo_h*i), d);
+            drawTriangle(x, y+(intervalo_w*i)/2, w-(intervalo_w*i), h-(intervalo_h*i), d);
             break;
          case RIGHT:
-            triangulo(x+(intervalo_w*i), y+(intervalo_w*i)/2, w-(intervalo_w*i), h-(intervalo_h*i), d);
+            drawTriangle(x+(intervalo_w*i), y+(intervalo_w*i)/2, w-(intervalo_w*i), h-(intervalo_h*i), d);
             break;
         }
         fill_index = (fill_index+1<c.length) ? fill_index+1 : 0 ;  
       }
     }
   }
-  
-  //Método alternativo para desenho de um triângulo
-  void triangulo(float x, float y, float w, float h, Direction d) {
+  //Método auxiliar para desenho de um triângulo
+  void drawTriangle(float x, float y, float w, float h, Direction d) {
     switch (d) {
       case LEFT:
         triangle(x, y+h/2, x+w, y, x+w,y+h);
@@ -223,10 +247,9 @@ class StephenWestfall {
         triangle(x, y+h, x, y, x+w, y);
         break;
        default:
-       triangulo(x, y, w, h, Direction.UP);
+       drawTriangle(x, y, w, h, Direction.UP);
     }
-  }
-  
+  } 
 }
 
 //Enum Directions utilizado para definir as direções das barras e dos triângulos

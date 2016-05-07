@@ -10,7 +10,7 @@ int     painting_colums;
 Direction start_direction;
 
 int     square_division;
-color[] square_colors;
+color[] square_colors,square_colors2;
 
 float   frames;
 float   frame_size;
@@ -18,53 +18,42 @@ float   frame_distance;
 color[] frame_colors;
 
 void setup() {
-
   size(500, 500);
-
+  //Propriedades da arte
   painting_x = 10;
   painting_y = 10;
   painting_width = 480;
   painting_height = 480;
-  
+  //Divisão da arte
   painting_rows = 4;
   painting_colums = 4;
   start_direction = Direction.LEFT;
-  
-  square_division = 5;
+  //Propriedade do elemento 'squares'
+  square_division = 9;
+  //Paleta de cores 1
   square_colors = artist.colors;
-
+  //Paleta de cores 2
+  square_colors2 = new color[]{
+    artist.colors[9], 
+    artist.colors[8], 
+    artist.colors[7], 
+    artist.colors[6], 
+    artist.colors[5], 
+    artist.colors[4], 
+    artist.colors[3], 
+    artist.colors[2], 
+    artist.colors[1], 
+    artist.colors[0]};
+  //Propriedade do elemento 'frames'
   frames = 0;
   frame_size = width/12;
   frame_distance = frame_size*2;
-  frame_colors = artist.colors;
-  
+  frame_colors = artist.colors; 
 }
 
 void draw() {
-
   background(255);
   noStroke();
-  drawSet(painting_x, painting_y, painting_width, painting_height, painting_rows, painting_colums, square_division, start_direction, square_colors);
-  //artist.drawFrames(frame_length, frame_size, frame_distance, artist.colors[2]);
+  artist.drawPainting(painting_x, painting_y, painting_width, painting_height, painting_rows, painting_colums, square_division, start_direction, square_colors, square_colors2);
   stop();
-}
-
-void drawSet(float x, float y, float w, float h, int row, int col, int square_division, Direction start_direction, color...c) {
-
-  float square_width = w/col;
-  float square_height = h/row;
-  
-  Direction current_direction = start_direction;
-  
-  for (int i = 0; i < row; i++) {
-    for (int j = 0; j < col; j++) {
-      artist.diagonallyStripedSquare(x+(square_width*j), y+(square_height*i), square_width, square_height, square_division, current_direction, c);
-      if (start_direction == Direction.LEFT) current_direction = (current_direction==start_direction) ? Direction.RIGHT : Direction.LEFT;
-      else current_direction = (current_direction==start_direction) ? Direction.LEFT : Direction.RIGHT;
-    }
-    if ( row % 2 == 0 ) { 
-      if (start_direction == Direction.LEFT) current_direction = (current_direction==start_direction) ? Direction.RIGHT : Direction.LEFT;
-      else current_direction = (current_direction==start_direction) ? Direction.LEFT : Direction.RIGHT;
-    }
-  }
 }
