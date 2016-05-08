@@ -38,7 +38,7 @@ class StephenWestfall
   }
   void drawColorFullSquare(float x, float y, float w, float h, int n, Direction d, color...c) {
     if (orginal_square_division) {
-      drawFixedColorFullSquare(x,y,w,h,n,d,c);
+      drawOriginalColorfulSquare(x,y,w,h,n,d,c);
     } else {
       drawFixedColorFullSquare(x,y,w,h,n,d,c);
     }

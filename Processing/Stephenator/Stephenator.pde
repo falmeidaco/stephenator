@@ -55,5 +55,4 @@ void draw() {
   background(255);
   noStroke();
   artist.drawPainting(painting_x, painting_y, painting_width, painting_height, painting_rows, painting_colums, square_division, start_direction, square_colors, square_colors2);
-  stop();
 }
