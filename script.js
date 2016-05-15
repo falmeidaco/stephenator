@@ -1,192 +1,15 @@
-(function ($) {
-    $(document).ready(function () {
-
-        var canvas = document.getElementById("canvas");
-        var context = canvas.getContext("2d");
-
-        var polygon = {
-            fillStyle: "",
-            draw: function (c, p1, p2, p3, p4, p5, p6, p7, p8) {
-                if (typeof p1 === "object") {
-                    c.fillStyle = this.fillStyle;
-                    c.beginPath();
-                    c.moveTo(p1[0][0], p1[0][1]);
-                    for (var i = 1; i < p1.length; i++) {
-                        context.lineTo(p1[i][0], p1[i][1]);
-                    }
-                    c.closePath();
-                    c.fill();
-                } else {
-                    c.fillStyle = this.fillStyle;
-                    c.beginPath();
-                    c.moveTo(p1, p2);
-                    c.lineTo(p3, p4);
-                    c.lineTo(p5, p6);
-                    c.lineTo(p7, p8);
-                    c.closePath();
-                    c.fill();
-                }
-            }
-        }
-
-        var Stephenator = {
-            default_colors:["#dcdadd", "#2290c1", "#ddac2c", "#421f35", "#e5702d", "#16205b", "#26863e", "#df4634", "#1288b6", "#282826", "#316654"],
-            props: {
-                set_position_x: 0,
-                set_position_y: 0,
-                set_width: canvas.width,
-                set_height: canvas.height,
-                set_matrix: 5,
-                set_square_division: 10,
-                set_square_colors: [["#dcdadd", "#2290c1", "#ddac2c", "#421f35", "#e5702d", "#16205b", "#26863e", "#df4634", "#1288b6", "#282826", "#316654"]],
-                frame_length:0,
-                frame_size:10,
-                frame_distance:10,
-                frame_color:"#dcdadd"
-            },
-            drawSet: function () {
-                var square_width = this.props.set_width / this.props.set_matrix;
-                var square_height = this.props.set_height / this.props.set_matrix;
-                var color_set = this.props.set_square_colors;
-                var current_set = 0;
-                var d = "right";
-                for (var i = 0; i < this.props.set_matrix; i++) {
-                    for (var j = 0; j < this.props.set_matrix; j++) {
-                        Stephenator.diagonallyStripedSquare(this.props.set_position_x + (square_width * j), this.props.set_position_y + (square_height * i), square_width, square_height, this.props.set_square_division, d, color_set[current_set]);
-                        d = (d === "left") ? "right" : "left";
-                        current_set = (current_set + 1 < color_set.length) ? current_set + 1 : 0;
-                    }
-                    if (this.props.set_matrix % 2 == 0) {
-                        d = (d === "left") ? "right" : "left";
-                    }
-                }
-            },
-            drawFrames:function(l,s,d,c) {
-                var l = this.props.frame_length;
-                var s = this.props.frame_size;
-                var d = this.props.frame_distance;
-                var c = this.props.frame_color;
-                var i;
-                context.fillStyle = c;
-                for (i = 0; i<l; i++) {
-                    context.fillRect(this.props.set_width/2-s-d*i, this.props.set_height/2-s-(d*i), s*2+((d*i)*2), s);
-                    context.fillRect(this.props.set_width/2-s-d*i, this.props.set_height/2+(d*i), s*2+((d*i)*2), s);
-                    context.fillRect(this.props.set_width/2-s-d*i, this.props.set_height/2-s-(d*i), s, s*2+((d*i)*2));
-                    context.fillRect(this.props.set_width/2+d*i, this.props.set_height/2-s-(d*i), s, s*2+((d*i)*2));
-                }
-            },
-            diagonallyStripedSquare: function (x, y, w, h, n, d, c) {
-                //Largura horizontal e vertical de cada listra
-                var distance_w = (w * 2) / n;
-                var distance_h = (h * 2) / n;
-                //Metada da largura horizontal e vertical de cada listra
-                var half_distance_w = ((w * 2) / n) / 2;
-                var half_distance_h = ((h * 2) / n) / 2;
-                //Variáveis de controle
-                var i, fill_index = 0;
-
-                //Verifica se o número total de listras é ímpar. Caso verdadeiro, ele faz o desenho utilizando o algorítimo que faz o desenho da listra central
-                if (n % 2 > 0) {
-                    var half = (n - 1) / 2;
-                    for (i = 0; i < half; i++) {
-                        polygon.fillStyle = c[fill_index];
-                        if (d === "left") {
-                            polygon.draw(context, x, y + h - (distance_h * i), x + (distance_w * i), y + h, x + (distance_w * (i + 1)), y + h, x, y + h - (distance_h * (i + 1)));
-                        } else {
-                            polygon.draw(context, x, y + (distance_h * i), x + (distance_w * i), y, x + (distance_w * (i + 1)), y, x, y + (distance_h * (i + 1)));
-                        }
-                        fill_index = (fill_index + 1 < c.length) ? fill_index + 1 : 0;
-                    }
-                    //Desenho da listra central
-                    polygon.fillStyle = c[fill_index];
-                    if (d === "left") {
-                        polygon.draw(context, [
-                            [x, y + half_distance_h],
-                            [x + w - half_distance_w, y + h],
-                            [x + w, y + h],
-                            [x + w, y + h - half_distance_h],
-                            [x + half_distance_w, y],
-                            [x,y]
-                        ]);
-                        /* Fix for processing */
-                        //polygon.draw(context, x, y + half_distance_h, x + w - half_distance_w, y + h, x + w, y + h, x, y);
-                        //polygon.draw(context, x, y, x + w, y + h, x + w, y + h - half_distance_h, x + half_distance_w, y);
-                    } else {
-                         polygon.draw(context, [
-                            [x, y + (h - half_distance_h)],
-                            [x + (w - half_distance_w), y],
-                            [x + w, y],
-                            [x + w, y + half_distance_h],
-                            [x + half_distance_w, y + h],
-                            [x, y + h]
-                        ]);
-                        /* Fix for processing */
-                        //polygon.draw(context, x, y + (h - half_distance_h), x + (w - half_distance_w), y, x + w, y, x, y + h);
-                        //polygon.draw(context, x, y + h, x + w, y, x + w, y + half_distance_h, x + half_distance_w, y + h);
-                    }
-                    fill_index = (fill_index + 1 < c.length) ? fill_index + 1 : 0;
-
-                    for (i = 0; i < half; i++) {
-                        polygon.fillStyle = c[fill_index];
-                        if (d === "left") {
-                            polygon.draw(context, x + (distance_w * i) + half_distance_w, y, x + w, y + h - (distance_h * i) - half_distance_h, x + w, y + h - (distance_h * (i + 1)) - half_distance_h, x + (distance_w * (i + 1)) + half_distance_w, y);
-                        } else {
-                            polygon.draw(context, x + (distance_w * i) + half_distance_w, y + h, x + w, y + (distance_h * i) + half_distance_h, x + w, y + (distance_h * (i + 1)) + half_distance_h, x + (distance_w * (i + 1)) + half_distance_w, y + h);
-                        }
-                        fill_index = (fill_index + 1 < c.length) ? fill_index + 1 : 0;
-                    }
-                    //Caso o número de listras seja par, ele faz o desenho utilizando o algorítimo que divide o número total de listras pela metade
-                } else {
-                    for (i = 0; i < n / 2; i++) {
-                        polygon.fillStyle = c[fill_index];
-                        if (d == "left") {
-                            polygon.draw(context, x, y + h - (distance_h * i), x + (distance_w * i), y + h, x + (distance_w * (i + 1)), y + h, x, y + h - (distance_h * (i + 1)));
-                        } else {
-                            polygon.draw(context, x, y + (distance_h * i), x + (distance_w * i), y, x + (distance_w * (i + 1)), y, x, y + (distance_h * (i + 1)));
-                        }
-                        fill_index = (fill_index + 1 < c.length) ? fill_index + 1 : 0;
-                    }
-                    for (i = 0; i < n / 2; i++) {
-                        polygon.fillStyle = c[fill_index];
-                        if (d === "left") {
-                            polygon.draw(context, x + (distance_w * i), y, x + w, y + h - (distance_h * i), x + w, y + h - (distance_h * (i + 1)), x + (distance_w * (i + 1)), y);
-                        } else {
-                            polygon.draw(context, x + (distance_w * i), y + h, x + w, y + (distance_h * i), x + w, y + (distance_h * (i + 1)), x + (distance_w * (i + 1)), y + h);
-                        }
-                        fill_index = (fill_index + 1 < c.length) ? fill_index + 1 : 0;
-                    }
-                }
-            }
-        }
+var artist = new StephenWestfall("canvas");
         
-        //Object to control canvas
-        var CanvasDraw = {
-            canvas:canvas,
-            animated:false,
-            playAnimation:function() {
-                this.animated = true;
-                this.draw(this.canvas);
-            },
-            stopAnimation:function() {
-                this.animated = false;
-            },
-            draw: function () {
-                //Clear canvas
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                //Update art properties
-                Stephenator.props.set_width = canvas.width;
-                Stephenator.props.set_height = canvas.height;
-                //Draw it!
-                Stephenator.drawSet(this.canvas);
-                Stephenator.drawFrames();
-                //If animated, replay
-                if (CanvasDraw.animated) window.requestAnimationFrame(this.draw);
-            }
-        }
-        
+(function($){
+    $(document).ready(function() {
+
+        //Iniciando objeto        
+        artist.drawPainting();
+
+        //Inicia perfectScrollBar
         $('.content').perfectScrollbar();
-        
-        //Covering background with canvas area
+
+        //Reposiciona e redesenha pintura quando houver modificação do tamanho da janela
         $(window).resize(function (event) {
             $("#canvas-container").css({width:$(window).width(),height:$(window).height()});
             if ($(window).width() > $(window).height()) {
@@ -196,101 +19,216 @@
                 $("#canvas").attr("width", $(window).height());
                 $("#canvas").attr("height", $(window).height());
             }
+            //Atualiza perfectSrollBar
             $('.content').perfectScrollbar('update');
-            //Redraw canvas
-            CanvasDraw.draw();
+            //Redesenha
+            artist.resize().redraw();
         }).resize();
-        
-        //Updating properties
-        $("#set_matrix").val(Stephenator.props.set_matrix);
-        $("#set_square_division").val(Stephenator.props.set_square_division);
-        $("#set_matrix").change(function() {
-            Stephenator.props.set_matrix = $(this).val();
-            CanvasDraw.draw();
+
+        //Abrir e fechar painel de configurações da arte
+        $('.panel-heading').on('click', function() {
+            $(this).parent().find('.panel-body').toggle();
         });
-        $("#set_square_division").change(function() {
-            Stephenator.props.set_square_division = $(this).val();
-            CanvasDraw.draw();
-        });
-        $("#frame_length").val(Stephenator.props.frame_length).change(function() {
-            Stephenator.props.frame_length = $(this).val();
-            console.log(Stephenator.props.frame_length);
-            CanvasDraw.draw();
-        });
-        $("#frame_size").val(Stephenator.props.frame_size).change(function() {
-            
-            Stephenator.props.frame_size = $(this).val();
-            CanvasDraw.draw();
-        });
-        $("#frame_distance").val(Stephenator.props.frame_distance).change(function() {
-            Stephenator.props.frame_distance = $(this).val();
-            CanvasDraw.draw();
-        });
-        $("#frame_color").change(function() {
-            Stephenator.props.frame_color = $(this).val();
-            CanvasDraw.draw();
-        });
-        
-        //Creating colors set
-        function updateSet() {
-            
-            var htmlItem = "";
-            var htmlDefOptions = "";
-            var htmlCurOptions = "";
-            var i;
-            
-            for (i = 0; i<Stephenator.default_colors.length; i++) {
-                htmlDefOptions += '<option style="background:'+Stephenator.default_colors[i]+'" value="'+Stephenator.default_colors[i]+'">'+Stephenator.default_colors[i]+'</option>';
+
+        //Ajuste de divisão dos quadrados
+        $("#orginal_square_division").change(function() {
+           if ($(this).val() === "1") {
+               artist.changeDivision(true).redraw();
+           } else {
+               artist.changeDivision(false).redraw();
+           }
+        }).find('option').each(function(i, e) {
+            current_value = (artist.getProp("orginal_square_division")) ? "1" : "0";
+            if ($(this).val() === current_value) {
+                $(this).attr("selected", "selected");
             }
-            
-            for (i = 0; i<Stephenator.props.set_square_colors.length; i++) {
-                for (j = 0; j<Stephenator.props.set_square_colors[i].length; j++) {
-                    htmlCurOptions += '<option style="background:'+Stephenator.props.set_square_colors[i][j]+'" value="'+j+'">'+Stephenator.props.set_square_colors[i][j]+'</option>';
+        });
+
+        //Linhas
+        $("#painting_rows").change(function() {
+            artist.setRow($("#painting_rows").val()).redraw();
+        }).val(artist.getProp("painting_rows"));
+        //Colunas
+        $("#painting_columns").change(function() {
+            artist.setColumn($("#painting_columns").val()).redraw();
+        }).val(artist.getProp("painting_colums"));
+
+        //Direção Inicial
+        $("#start_direction").change(function() {
+            artist.changeStartDirection($(this).val()).redraw();
+        }).find('option').each(function(i, e) {
+            current_value = artist.getProp("start_direction");
+            if ($(this).val() === current_value) {
+                $(this).attr("selected", "selected");
+            }
+        });;
+
+        //Divisão dos quadrados
+        $("#square_division").change(function() {
+            artist.setSquareDivision($("#square_division").val()).redraw();
+        }).val(artist.getProp("square_division"));
+
+        //Moldura sobrepostas
+        $("#frames_enabled").change(function() {
+           if ($(this).val() === "1") {
+               artist.changeFrames(true).redraw();
+           } else {
+               artist.changeFrames(false).redraw();
+           }
+        }).find('option').each(function(i, e) {
+            current_value = (artist.getProp("frames_enabled")) ? "1" : "0";
+            if ($(this).val() === current_value) {
+                $(this).attr("selected", "selected");
+            }
+        });
+        //Número de molduras
+        $("#frames").change(function() {
+            artist.setFrame($("#frames").val()).redraw();
+        }).val(artist.getProp("frames"));
+        //Tamanho das molduras
+        $("#frame_size").change(function() {
+            artist.setFrameSize($("#frame_size").val()).redraw();
+        }).val(artist.getProp("frame_size"));
+        //Distância entre as molduras
+        $("#frame_distance").change(function() {
+            artist.setFrameDistance($("#frame_distance").val()).redraw();
+        }).val(artist.getProp("frame_distance"));
+
+        //Gerenciamento de cores dos quadrados
+        function renderPaletteMananger() {
+
+            //Reseta html
+            $('#square_palettes').html("");
+
+            for (i = 0; i < artist.getProp('square_colors').length; i+=1) {
+                //Cria element html para a paleta
+                var li = document.createElement('li');
+                //Define atributos
+                li.className = "palette-item";
+                li.setAttribute('data-palette_id',i);
+                //Adiciona evento para remover paleta
+                li.addEventListener('dblclick',function() {
+                    artist.removePalette(this.dataset.palette_id).redraw();
+                    renderPaletteMananger();
+                });
+
+                for (j = 0; j < artist.getProp('square_colors')[i].length; j+=1) {
+
+                    //Cria elemento html para a cor
+                    var colorItem = document.createElement('div');
+                    //Define atribudos
+                    colorItem.className = "color-item";
+                    colorItem.setAttribute('data-palette_id',i);
+                    colorItem.setAttribute('data-color_id',j);
+                    colorItem.setAttribute('data-color', artist.getProp('square_colors')[i][j]);
+                    colorItem.style.backgroundColor = artist.getProp('square_colors')[i][j];
+
+                    //Cria elemento html para remover cor
+                    var colorItemRemove = document.createElement('a');
+                    colorItemRemove.className = 'color-remove';
+                    colorItemRemove.setAttribute('data-palette_id',i);
+                    colorItemRemove.setAttribute('data-color_id',j);
+                    colorItemRemove.addEventListener('click',function(event) {
+                        artist.removeColor(this.dataset.color_id, this.dataset.palette_id).redraw();
+                        event.stopPropagation();
+                        renderPaletteMananger();
+                    });
+                    colorItem.appendChild(colorItemRemove);
+
+                    //Adiciona cor à paleta                            
+                    li.appendChild(colorItem);                            
+
                 }
-                htmlItem += '<li id="item-'+i+'">'+
-                            '<select name="default-colors" class="def-colors">'+htmlDefOptions+'</select>'+
-                            '<button class="add-color">+</button>'+
-                            '<select name="default-colors" class="set-colors">'+htmlCurOptions+'</option>'+'</select>'+
-                            '<button class="rem-color">-</button>'+
-                            '</li>';
-                htmlCurOptions = "";
+
+                //Cria botão para adicionar cor
+                var addColor = document.createElement('div');
+                addColor.className = "add-color";
+                addColor.setAttribute('data-palette_id', i);
+                addColor.addEventListener('click', function(event) {
+                    artist.addColor(artist.getDefaultColors()[0], this.dataset.palette_id).redraw();
+                    renderPaletteMananger();
+                });
+                //Adiciona botão à paleta
+                li.appendChild(addColor);
+
+                //Adiciona paleta
+                $('#square_palettes').append(li);
             }
-            
-            $("#set-colors").html(htmlItem);
-        }
+            //Instancia plugin da paleta de cores para os elementos
+            $('#square_palettes div.color-item').colorpicker({
+                colorSelectors: artist.getDefaultColors()
+            }).on('changeColor', function(e) {
+                $(e.currentTarget).css('background-color',e.color.toHex());
+                artist.setPaletteColor(e.color.toHex(), $(e.currentTarget).data('color_id'), $(e.currentTarget).data('palette_id')).redraw();
+            });
+
+        };
+
+        renderPaletteMananger();
 
         $("#add-set").click(function() {
-            Stephenator.props.set_square_colors.push([Stephenator.default_colors[0]]);
-            updateSet();
-            CanvasDraw.draw();
+            var colors = artist.getDefaultColors();
+            artist.addPalette(colors).redraw();
+            renderPaletteMananger();
         });
-        
-        $('#set-colors').delegate('button', 'click', function() {
-            
-            var set_id = parseInt($(this).parent().attr("id").replace("item-",""));
-            var selected_item;
-            
-            switch ( $(this).attr("class") ) {
-                case "add-color":
-                    Stephenator.props.set_square_colors[set_id].push($('#item-'+set_id+' .def-colors').val());
-                    break;
-                case "rem-color":
-                    console.log(Stephenator.props.set_square_colors[set_id].length);
-                    if (Stephenator.props.set_square_colors[set_id].length>0) {   
-                        selected_item = $("#item-"+set_id+" .set-colors").val();
-                        Stephenator.props.set_square_colors[set_id].splice(selected_item, 1);
-                    } else {
-                        Stephenator.props.set_square_colors.splice(set_id, 1);
-                    }
-                    break;
+
+        function frameRenderPaletteMananger () {
+
+            //Reseta html
+            $('#frame_palettes').html("");
+
+            //Cria element html para a paleta
+            var li = document.createElement('li');
+            //Define atributos
+            li.className = "palette-item";
+
+            for (i = 0; i < artist.getProp('frame_colors').length; i+=1) {
+
+                //Cria elemento html para a cor
+                var colorItem = document.createElement('div');
+                //Define atribudos
+                colorItem.className = "color-item";
+                colorItem.setAttribute('data-color_id',i);
+                colorItem.setAttribute('data-color', artist.getProp('frame_colors')[i]);
+                colorItem.style.backgroundColor = artist.getProp('frame_colors')[i];
+
+                //Cria elemento html para remover cor
+                var colorItemRemove = document.createElement('a');
+                colorItemRemove.className = 'color-remove';
+                colorItemRemove.setAttribute('data-color_id',i);
+                colorItemRemove.addEventListener('click',function(event) {
+                    artist.removeFrameColor(this.dataset.color_id).redraw();
+                    event.stopPropagation();
+                    frameRenderPaletteMananger();
+                });
+                colorItem.appendChild(colorItemRemove);
+
+                //Adiciona cor à paleta                            
+                li.appendChild(colorItem);                            
+
             }
-            
-            updateSet();
-            CanvasDraw.draw();
-            
-        });
-        
-        updateSet();
-        
+
+            //Cria botão para adicionar cor
+            var addColor = document.createElement('div');
+            addColor.className = "add-color";
+            addColor.addEventListener('click', function(event) {
+                artist.addFrameColor(artist.getDefaultColors()[0]).redraw();
+                frameRenderPaletteMananger();
+            });
+            //Adiciona botão à paleta
+            li.appendChild(addColor);
+
+            //Adiciona paleta
+            $('#frame_palettes').append(li);
+
+            //Instancia plugin da paleta de cores para os elementos
+            $('#frame_palettes div.color-item').colorpicker({
+                colorSelectors: artist.getDefaultColors()
+            }).on('changeColor', function(e) {
+                $(e.currentTarget).css('background-color', e.color.toHex());
+                artist.setFrameColor(e.color.toHex(), $(e.currentTarget).data('color_id')).redraw();
+            });  
+        };
+        frameRenderPaletteMananger();
     });
-})(jQuery);
+}(jQuery));
