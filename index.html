@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="tag" content="processing, stephen westfall, ufc, javascript, canvas, html5 ">
-    <meta name="description" content="Site do trabalho desenvolvido para a disciplina de Matemática Aplicada à Multimídia, pela Universidade Federal do Ceará (UFC)">
-    <title>Stephenator</title>
+    <meta name="description" content="Página que gera uma arte inspirada nas obras do pintor norte americano Stephen Westfall. Pela página é possível controlar, por meio de parâmetros observados nas pinturas geométricas,aspectos da arte gerada. As cores sugeridas também são inspiradas nas utilizadas pelo Stephen Westfall, porém é possível também utilizar cores personalizadas. Site do trabalho desenvolvido para a disciplina de Matemática Aplicada à Multimídia, pela Universidade Federal do Ceará (UFC)">
+    <title>Stephenator | Gerador de arte criado por Felipe Almeida</title>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/perfect-scrollbar/css/perfect-scrollbar.min.css">
     <link rel="stylesheet" href="bower_components/mjolnic-bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
@@ -34,10 +34,10 @@
         })(window, document, 'script', 'dataLayer', 'GTM-PM89VR');
     </script>
     <!-- End Google Tag Manager -->
-    <section class="content">
+    <section class="content" id="site-content">
         <div class="container-fluid">
             <header>
-                <img class="img-responsive" img-re src="assets/logo.png" alt="stephenator - criador de arte">
+                <img draggable="true" class="img-responsive" img-re src="assets/logo.png" alt="stephenator - criador de arte">
             </header>
             <div class="panel panel-default">
                 <div class="panel-heading">configurações da arte</div>
@@ -116,12 +116,15 @@
                 <h3>Objetivo</h3>
                 <p>O site foi desenvolvido para a visualização do resultado do desenvolvimento do trabalho para a disciplina de <strong>Matemática Aplicada à Multimídia I</strong> (Universidade Federal do Ceará, semestre II). Selecionando uma série de obras de algum artista, deve ser desenvolvido um recurso que possibilite a reprodução visual da série escolhida. Deve ser analisado os detalhes das obras, seus padrões de formas, cores, ângulos e quaisquer outras características que possam ser usadas como variáveis a serem utilizadas para a reprodução da imagem.</p>
                 <h3>Desenvolvimento</h3>
-                <p>Inicialmente foi analisado as características e padrões da obra. É possível perceber que ela é composta por uma repetição de quadrados. Estes quadrados possuem um número de divisões padrão para todos eles, e para cada divisão é aplicada uma cor, resultando em um quadrado colorido diagonalmente listrado. Cada quadrado é composto por trapézios. Quando o número de divisões de cada quadrado é ímpar, é gerada uma exceção para o elemento central, que acaba virando um hexágono.</p>
+                <p>Inicialmente foi analisado as características e padrões da obra. É possível perceber que ela é composta por uma repetição de quadrados. Estes quadrados possuem um número de divisões com um padrão para todos eles, e para cada divisão é aplicada uma cor, resultando em um quadrado colorido diagonalmente listrado. Cada quadrado é composto por trapézios. Quando o número de divisões de cada quadrado é ímpar, é gerada uma exceção para o elemento central, que acaba virando um hexágono.</p>
                 <p>Foi desenvolvido um algoritmo em Processing para o estudo do comportamento desses elementos. O primeiro passo foi a simplificação da obra, desenhando um único quadrado utilizando a função <em>quad</em> do Processing para o desenho dos trapézios. É importante notar que para a regra de divisões ímpares citada no parágrafo cima, foi utilizado o seguinte método: o desenho hexágono central é composto por dois trapézios. A razão disso é que no Processing não existe uma função básica para o desenho de formas com mais de 4 vértices.</p>
                 <h3>Recursos</h3>
-                <p>Concluído o algoritmo, este foi reproduzido e adaptado para página da web utilizando o recurso canvas do HTML5. Para o site, também foi utilizado a biblioteca css <a href="http://getbootstrap.com/">Bootstrap</a> com os elementos customizados, biblioteca javascript <a href="https://jquery.com/">JQuery</a> para o desenvolvimento dos controles de variáveis, e a biblioteca javascript <a href="https://noraesae.github.io/perfect-scrollbar/">Perfect-Scrollbar</a> para a customização da barra de rolagem da área de conteúdo.</p>
+                <p>Concluído o algoritmo, este foi reproduzido e adaptado para página da web utilizando o recurso canvas do HTML5. Para o site, também foi utilizado a biblioteca css <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> com os elementos customizados, biblioteca javascript <a href="https://jquery.com/" target="_blank">JQuery</a> para o desenvolvimento dos controles de variáveis, e a biblioteca javascript <a href="https://noraesae.github.io/perfect-scrollbar/" target="_blank">Perfect-Scrollbar</a> para a customização da barra de rolagem da área de conteúdo.</p>
                 <h2>Sobre o artista</h2>
-                <p>Stephen Westfall é um artita e crítico que se descreve como “Popista, pós-minimalista de pinturas geométricas.</p>
+                <p>Stephen Westfall é um artita e crítico que se descreve como “Popista, pós-minimalista de pinturas geométricas. <a href="https://pt.wikipedia.org/wiki/Schenectady" target="_blank">Saiba mais sobre Stephen Westfall.</a></p>
+                <h2>Sobre o autor do site</h2>
+                <p>Sou Felipe Almeida, estudante do curso de graduação Sistemas e Mídias Digitais, na Universidade Federal do Ceará.</p>
+
             </article>
         </div>
     </section>
